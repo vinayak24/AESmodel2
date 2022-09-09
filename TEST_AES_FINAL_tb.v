@@ -1,0 +1,77 @@
+module TEST_AES_FINAL_Tb;
+
+reg		clk;
+reg		rst;
+
+reg		kld;
+reg	[127:0]	key_tx,key_rx;
+reg	[127:0]	text_in;
+wire	[127:0]	enc_data;
+wire	[127:0]	dec_data;
+
+wire		enc_complete;
+wire  dec_complete;
+reg [15:0]count_reg;
+
+
+ 
+
+AES_TOP_FINAL Main (clk,rst,kld,key_tx,key_rx,text_in,enc_data,dec_data,enc_complete,dec_complete);
+
+
+initial
+begin
+    clk=0;
+    rst=0;
+    kld=0;
+    count_reg=16'd0;
+
+end
+
+always #5 clk = ~clk;
+
+initial
+begin
+    #100; kld=1;
+	key_tx=128'h00004453454320564C53492145726F6A;
+	key_rx=128'h00004453454320564C53492145726F6A;
+    text_in=        128'h00004453454320123456789054632145; 
+    rst=1;
+    #10;  kld=0; 
+   
+
+end
+
+
+always @(posedge clk)
+begin
+    
+    if(enc_complete)
+    begin
+    $display("INPUT DATA=%b",text_in);
+    $display("AES ENCRYPT DATA=%b",enc_data);
+  
+    
+   end
+   
+    
+    if(dec_complete)
+    begin
+     count_reg=count_reg+16'd1;
+     $display("AES DECRYPT DATA=%h",dec_data);
+     #10;kld=1;
+     #100;kld=0;
+     
+  
+     
+  
+     
+    end
+   
+
+end
+
+
+endmodule
+
+
